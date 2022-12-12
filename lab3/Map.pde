@@ -84,6 +84,7 @@ class Map
       }
       
       //Goes through walls and determines which are the sides of each cell
+      
       int num = 0;
       for(int j = 0; j <= width - GRID_SIZE; j += GRID_SIZE)
         {
@@ -99,6 +100,22 @@ class Map
            num++;
           }
         }
+        
+        /**
+        int currentWidth = 0;
+        int currentHeight = 1;
+        
+        for(int j = 0; j < cells.length; j++)
+        {
+          cells[j].sides.add(walls.get(currentWidth));
+          cells[j].sides.add(walls.get(currentHeight));
+          cells[j].sides.add(walls.get(currentWidth + 2));
+          cells[j].sides.add(walls.get(currentHeight + GRID_SIZE + 2));
+          
+          currentWidth = currentWidth + 1;
+          currentHeight = currentHeight +1;
+        }
+        */
         
         //Calculates the center of each cell using the four sides
         for(Cell c : cells)
@@ -192,6 +209,16 @@ class Map
          continue;
        }
        
+       Cell selectedCell = new Cell();
+       for(int i = 0; i < visitedCells.size(); i++)
+       {
+         if(visitedCells.get(i).sides.contains(selected))
+         {
+           selectedCell = visitedCells.get(i);
+           break;
+         }
+       }
+       
        for(int i = 0; i < c.length; i++)
        {
          if(c[i].sides.contains(selected) && !visitedCells.contains(c[i]))
@@ -199,7 +226,7 @@ class Map
            w.remove(selected);
            Cell neighbor = c[i];
            c[i].visited = true;
-           //c.neighbours.add();
+           selectedCell.neighbors.add(neighbor);
            visitedCells.add(neighbor);
            frontier.addAll(neighbor.sides);
            break;
@@ -229,11 +256,11 @@ class Map
       }
       
       //Draws center of each cell
-      /**
+     
       for(Cell c : cells)
       {
         stroke(#ffea00);
-        circle(c.cellCenter.x, c.cellCenter.y, 5);
+        circle(c.cellCenter.x, c.cellCenter.y, 3);
       }
       
       //Draws lines connecting neighbors
@@ -246,7 +273,7 @@ class Map
          line(c.cellCenter.x, c.cellCenter.y, n.cellCenter.x, n.cellCenter.y); 
         }
       }
-    */
+    
       
       //Shows selected starting cell
       stroke(#eb4034);
