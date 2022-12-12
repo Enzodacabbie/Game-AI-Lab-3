@@ -44,7 +44,6 @@ class Map
    Map()
    {
       walls = new ArrayList<Wall>();
-      
    }
   
    
@@ -109,6 +108,34 @@ class Map
          c.cellCenter = sum;
         }
         
+        //Determines the neighbors of each cell by comparing common walls
+        for(int i = 0; i < cellNum; i++)
+        {
+         for(int j = i; j < cellNum; j++)
+         {
+          if(i != j)
+          {
+            for(Wall iWall : cells[i].sides)
+            {
+             for(Wall jWall : cells[j].sides)
+             {
+              if((iWall.start == jWall.start ) && (iWall.end == jWall.end))
+              {
+               if(!cells[i].neighbors.contains(cells[j]))
+               {
+                cells[i].neighbors.add(cells[j]); 
+               }
+               if(!cells[j].neighbors.contains(cells[i]))
+               {
+                cells[j].neighbors.add(cells[i]); 
+               }
+              }
+             }
+            }
+          }
+         }
+        }
+        
         //Determine the starting point
         start = (int)random(widthNum * heightNum);
       
@@ -137,6 +164,16 @@ class Map
       {
         stroke(#ffea00);
         circle(c.cellCenter.x, c.cellCenter.y, 5);
+      }
+      
+      //Draws lines connecting neighbors
+      strokeWeight(1.5);
+      for(Cell c : cells)
+      {
+        for(Cell n : c.neighbors)
+        {
+         line(c.cellCenter.x, c.cellCenter.y, n.cellCenter.x, n.cellCenter.y); 
+        }
       }
       
       //Shows selected starting cell
