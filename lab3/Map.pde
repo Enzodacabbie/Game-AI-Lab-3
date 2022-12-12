@@ -38,6 +38,7 @@ class Wall
 class Map
 {
    ArrayList<Wall> walls;
+   Cell[] cells;
    
    Map()
    {
@@ -53,7 +54,7 @@ class Map
       int widthNum = width/GRID_SIZE;
       int heightNum = height/GRID_SIZE;
       int cellNum = widthNum * heightNum;
-      Cell[] cells = new Cell[cellNum];
+      cells = new Cell[cellNum];
       
       for(int i = 0; i <= width; i += GRID_SIZE)
       {
@@ -90,6 +91,18 @@ class Map
            num++;
           }
         }
+        
+        for(Cell c : cells)
+        {
+         PVector sum = new PVector(0, 0);
+         for(Wall s : c.sides)
+         {
+           sum.add(s.center());
+         }
+         sum.div(4);
+         
+         c.cellCenter = sum;
+        }
       
       for(int i = 0; i < cells[0].sides.size(); i++){
         System.out.println(cells[0].sides.get(i));
@@ -108,6 +121,12 @@ class Map
       for (Wall w : walls)
       {
          w.draw();
+      }
+      
+      for(Cell c : cells)
+      {
+        stroke(#ffea00);
+        circle(c.cellCenter.x, c.cellCenter.y, 5);
       }
    }
 }
