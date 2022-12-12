@@ -5,6 +5,7 @@ class Wall
    PVector normal;
    PVector direction;
    float len;
+   boolean isEdge;
    
    Wall(PVector start, PVector end)
    {
@@ -14,6 +15,7 @@ class Wall
       len = direction.mag();
       direction.normalize();
       normal = new PVector(-direction.y, direction.x);
+      isEdge = false;
    }
    
    // Return the mid-point of this wall
@@ -47,7 +49,6 @@ class Map
    }
   
    
-   
    void generate(int which)
    {
       walls.clear();
@@ -63,11 +64,15 @@ class Map
         {
           if(i != width)
           {
-            walls.add(new Wall(new PVector(i, j), new PVector(i+GRID_SIZE, j)));
+            Wall addWall = new Wall(new PVector(i, j), new PVector(i+GRID_SIZE, j));
+            addWall.isEdge = isWallEdge(addWall);
+            walls.add(addWall);
           }
           if(j != height)
           {
-            walls.add(new Wall(new PVector(i, j), new PVector(i, j+GRID_SIZE)));
+            Wall addWall = new Wall(new PVector(i, j), new PVector(i, j+GRID_SIZE));
+            addWall.isEdge = isWallEdge(addWall);
+            walls.add(addWall);
           }
         }
       }
@@ -109,6 +114,7 @@ class Map
         }
         
         //Determines the neighbors of each cell by comparing common walls
+        /**
         for(int i = 0; i < cellNum; i++)
         {
          for(int j = i; j < cellNum; j++)
@@ -135,14 +141,78 @@ class Map
           }
          }
         }
+        */
         
         //Determine the starting point
         start = (int)random(widthNum * heightNum);
+        
+        prims(walls, cells, cells[start]);
       
       //Print sides of a cell for testing
       for(int i = 0; i < cells[0].sides.size(); i++){
         System.out.println(cells[0].sides.get(i));
       }
+   }
+   
+   //used to check if newly created wall is on the edge of the screen
+   boolean isWallEdge(Wall w)
+   {
+     if((w.start.x == 800 && w.end.x == 800) || (w.start.x == 0 && w.end.x == 0))
+     {
+       return true;
+     }
+     
+     if((w.start.y == 600 && w.end.y == 600) || (w.start.y == 0 && w.end.y == 0))
+     {
+       return true;
+     }
+     else
+       return false;
+   }
+   
+   //main prims implementation
+   void prims(ArrayList<Wall> w, Cell[] c, Cell start)
+   {
+     ArrayList<Wall> frontier = new ArrayList<Wall>();
+     ArrayList<Cell> visitedCells = new ArrayList<Cell>();
+     
+     visitedCells.add(start);
+     frontier.addAll(start.sides);
+     System.out.println(frontier.size());
+     
+     while(visitedCells.size() < c.length)
+     {
+       //select a random wall from the frontier
+       int index = (int)(Math.random() * frontier.size());
+       Wall selected = frontier.get(index);
+       
+       //if the wall is on the edge of the screen, it cannot be used
+       if(selected.isEdge == true)
+       {
+         continue;
+       }
+       
+       Cell neighbor = c[0];
+       for(int i = 0; i < c.length; i++)
+       {
+         if(c[i].sides.contains(selected))
+         {
+           c[i].visited = true;
+           neighbor = c[i];
+           break;
+         }
+       }
+       
+       w.remove(selected);
+       frontier.remove(index);
+       frontier.addAll(neighbor.sides);
+       //frontier.remove(selected);
+       System.out.println(frontier.size());
+       visitedCells.add(neighbor);
+     }
+     System.out.println(c.length);
+     walls = w;
+     
    }
    
    void update(float dt)
@@ -167,6 +237,7 @@ class Map
       }
       
       //Draws lines connecting neighbors
+      /**
       strokeWeight(1.5);
       for(Cell c : cells)
       {
@@ -175,6 +246,7 @@ class Map
          line(c.cellCenter.x, c.cellCenter.y, n.cellCenter.x, n.cellCenter.y); 
         }
       }
+      */
       
       //Shows selected starting cell
       stroke(#eb4034);
@@ -187,4 +259,11 @@ class Cell
   ArrayList<Wall> sides = new ArrayList<Wall>();
   PVector cellCenter;
   ArrayList<Cell> neighbors = new ArrayList<Cell>();
+  
+  boolean visited;
+  
+  Cell()
+  {
+    visited = false;
+  }
 }
