@@ -39,6 +39,7 @@ class Map
 {
    ArrayList<Wall> walls;
    Cell[] cells;
+   int start;
    
    Map()
    {
@@ -56,6 +57,7 @@ class Map
       int cellNum = widthNum * heightNum;
       cells = new Cell[cellNum];
       
+      //Creates walls at intervals of GRID_SIZE to make the grid
       for(int i = 0; i <= width; i += GRID_SIZE)
       {
         for(int j = 0; j <= height; j += GRID_SIZE)
@@ -71,11 +73,13 @@ class Map
         }
       }
       
+      //Initialize cells
       for(int i = 0; i < cellNum; i++)
       {
         cells[i] = new Cell();
       }
       
+      //Goes through walls and determines which are the sides of each cell
       int num = 0;
       for(int j = 0; j <= width - GRID_SIZE; j += 40)
         {
@@ -92,6 +96,7 @@ class Map
           }
         }
         
+        //Calculates the center of each cell using the four sides
         for(Cell c : cells)
         {
          PVector sum = new PVector(0, 0);
@@ -103,7 +108,11 @@ class Map
          
          c.cellCenter = sum;
         }
+        
+        //Determine the starting point
+        start = (int)random(widthNum * heightNum);
       
+      //Print sides of a cell for testing
       for(int i = 0; i < cells[0].sides.size(); i++){
         System.out.println(cells[0].sides.get(i));
       }
@@ -123,11 +132,16 @@ class Map
          w.draw();
       }
       
+      //Draws center of each cell
       for(Cell c : cells)
       {
         stroke(#ffea00);
         circle(c.cellCenter.x, c.cellCenter.y, 5);
       }
+      
+      //Shows selected starting cell
+      stroke(#eb4034);
+      circle(cells[start].cellCenter.x, cells[start].cellCenter.y, 10);
    }
 }
 
