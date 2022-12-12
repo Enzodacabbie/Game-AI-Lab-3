@@ -192,23 +192,21 @@ class Map
          continue;
        }
        
-       Cell neighbor = c[0];
        for(int i = 0; i < c.length; i++)
        {
-         if(c[i].sides.contains(selected))
+         if(c[i].sides.contains(selected) && !visitedCells.contains(c[i]))
          {
+           w.remove(selected);
+           Cell neighbor = c[i];
            c[i].visited = true;
-           neighbor = c[i];
+           visitedCells.add(neighbor);
+           frontier.addAll(neighbor.sides);
            break;
          }
        }
-       
-       w.remove(selected);
+
        frontier.remove(index);
-       frontier.addAll(neighbor.sides);
-       //frontier.remove(selected);
        System.out.println(frontier.size());
-       visitedCells.add(neighbor);
      }
      System.out.println(c.length);
      walls = w;
