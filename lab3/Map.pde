@@ -50,6 +50,10 @@ class Map
    void generate(int which)
    {
       walls.clear();
+      int widthNum = width/GRID_SIZE;
+      int heightNum = height/GRID_SIZE;
+      int cellNum = widthNum * heightNum;
+      Cell[] cells = new Cell[cellNum];
       
       for(int i = 0; i <= width; i += GRID_SIZE)
       {
@@ -64,6 +68,31 @@ class Map
             walls.add(new Wall(new PVector(i, j), new PVector(i, j+GRID_SIZE)));
           }
         }
+      }
+      
+      for(int i = 0; i < cellNum; i++)
+      {
+        cells[i] = new Cell();
+      }
+      
+      int num = 0;
+      for(int j = 0; j <= width - GRID_SIZE; j += 40)
+        {
+          for(int k = 0; k <= height - GRID_SIZE; k += 40)
+          {
+           for(Wall w : walls)
+           {
+             if((w.start.x == j && w.start.y == k) || (w.end.x == j+GRID_SIZE && w.end.y == k+GRID_SIZE))
+             {
+               cells[num].sides.add(w);
+             }
+           }
+           num++;
+          }
+        }
+      
+      for(int i = 0; i < cells[0].sides.size(); i++){
+        System.out.println(cells[0].sides.get(i));
       }
    }
    
@@ -81,4 +110,11 @@ class Map
          w.draw();
       }
    }
+}
+
+class Cell
+{
+  ArrayList<Wall> sides = new ArrayList<Wall>();
+  PVector cellCenter;
+  ArrayList<Cell> neighbors = new ArrayList<Cell>();
 }
