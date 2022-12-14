@@ -5,5 +5,6 @@ boolean DEBUG = false;
 // use for debugging, if you want to see where walls start/end (a circle is drawn closer to the end)
 boolean SHOW_WALL_DIRECTION = false;
 
+int CRUMB_SIZE = 2;
 
-int GRID_SIZE = 40;
+int GRID_SIZE = 100;
